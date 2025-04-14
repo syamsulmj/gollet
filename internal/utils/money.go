@@ -12,7 +12,7 @@ func CentsToMoney(cents int64, currency string) string {
 	case "USD":
 		return fmt.Sprintf("$%.2f", float64(cents)/100)
 	case "MYR":
-		return fmt.Sprintf("€%.2f", float64(cents)/100)
+		return fmt.Sprintf("RM%.2f", float64(cents)/100)
 	default:
 		// For unknown currencies, just show the decimal amount
 		return fmt.Sprintf("%.2f", float64(cents)/100)
