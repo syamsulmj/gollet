@@ -12,10 +12,10 @@ func SetupRoutes(router *gin.Engine, walletHandler *handlers.WalletHandler, user
 		api.POST("/users/signup", userHandler.Signup)
 		api.POST("/users/login", userHandler.Login)
 
-		wallet := api.Group("/wallets")
+		wallet := api.Group("users/:userId/wallets")
 		{
-			wallet.POST("/:userId/deposit", walletHandler.Deposit)
-			// wallet.POST("/:userId/withdraw", walletHandler.Withdraw)
+			wallet.POST("/deposit", walletHandler.Deposit)
+			wallet.POST("/withdraw", walletHandler.Withdraw)
 			// wallet.POST("/:userId/transfer", walletHandler.Transfer)
 			// wallet.GET("/:userId/balance", walletHandler.GetBalance)
 		}

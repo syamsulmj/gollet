@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -57,6 +58,35 @@ func (h *WalletHandler) Deposit(c *gin.Context) {
 	wallet, err := h.walletService.Deposit(uint(userId), uint(amount))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to deposit"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": gin.H{
+		"id":       wallet.ID,
+		"user_id":  wallet.UserId,
+		"balance":  utils.CentsToMoney(int64(wallet.Balance), wallet.Currency),
+		"currency": wallet.Currency,
+	}})
+}
+
+func (h *WalletHandler) Withdraw(c *gin.Context) {
+	userIdStr := c.Param("userId")
+	userId, err := strconv.ParseUint(userIdStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	var req WithdrawRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	amount := utils.MoneyToCents(req.Amount)
+	wallet, err := h.walletService.Withdraw(uint(userId), uint(amount))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to withdraw: %v", err)})
 		return
 	}
 
