@@ -1,0 +1,29 @@
+version: '1.0'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: gollet-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data/
+
+  server:
+    build: .
+    container_name: gollet-server
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      DATABASE_URL: "host=db user=${DB_USER} password=${DB_PASSWORD} dbname=${DB_NAME} port=5432 sslmode=disable"
+      PORT: ${PORT}
+    depends_on:
+      - db
+    restart: on-failure
+
+volumes:
+  db_data:
