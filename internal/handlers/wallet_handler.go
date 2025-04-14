@@ -34,6 +34,16 @@ type TransferRequest struct {
 	Amount          float64 `json:"amount" binding:"required"`
 }
 
+type TransactionHistoryResponse struct {
+	ID              uint   `json:"id"`
+	UserId          uint   `json:"user_id"`
+	Amount          string `json:"amount"`
+	TransactionType string `json:"transaction_type"`
+	Metadata        string `json:"metadata"`
+	Currency        string `json:"currency"`
+	CreatedAt       string `json:"created_at"`
+}
+
 func (h *WalletHandler) Deposit(c *gin.Context) {
 	// In Go: Gets URL parameter "userId" and assigns it to userIdStr
 	// Equivalent Elixir: user_id_str = conn.params["user_id"]
@@ -163,5 +173,18 @@ func (h *WalletHandler) GetTransactionHistory(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": transactions})
+	var response []TransactionHistoryResponse
+	for _, transaction := range transactions {
+		response = append(response, TransactionHistoryResponse{
+			ID:              transaction.ID,
+			UserId:          transaction.UserId,
+			Amount:          utils.CentsToMoney(int64(transaction.Amount), transaction.Currency),
+			TransactionType: transaction.TransactionType,
+			Metadata:        transaction.Metadata,
+			Currency:        transaction.Currency,
+			CreatedAt:       transaction.CreatedAt.Format("2006-01-02 15:04:05"),
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": response})
 }
