@@ -16,8 +16,8 @@ import (
 )
 
 func main() {
-	fmt.Println("Hello, World!")
-	fmt.Println("This is a simple Go program.")
+	fmt.Println("Hello, UwU-rians!")
+	fmt.Println("This is my first attempt in creating a simple Go backend service.")
 
 	err := godotenv.Load()
 	if err != nil {
