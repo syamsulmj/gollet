@@ -16,8 +16,9 @@ func SetupRoutes(router *gin.Engine, walletHandler *handlers.WalletHandler, user
 		{
 			wallet.POST("/deposit", walletHandler.Deposit)
 			wallet.POST("/withdraw", walletHandler.Withdraw)
-			// wallet.POST("/:userId/transfer", walletHandler.Transfer)
-			// wallet.GET("/:userId/balance", walletHandler.GetBalance)
+			wallet.POST("/transfer", walletHandler.Transfer)
+			wallet.GET("/balance", walletHandler.GetBalance)
+			wallet.GET("/transactions/history", walletHandler.GetTransactionHistory)
 		}
 	}
 }

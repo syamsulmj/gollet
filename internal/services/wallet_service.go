@@ -107,6 +107,63 @@ func (s *WalletService) Withdraw(userId uint, amount uint) (*models.Wallet, erro
 	return wallet, nil
 }
 
+func (s *WalletService) Transfer(fromUserId uint, toUserId uint, amount uint) (*models.Wallet, error) {
+	if amount <= 0 {
+		return nil, errors.New("amount must be greater than zero")
+	}
+
+	fromWallet, err := s.walletRepository.FindByUserId(fromUserId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find from wallet: %w", err)
+	}
+
+	toWallet, err := s.walletRepository.FindByUserId(toUserId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find to wallet: %w", err)
+	}
+
+	if fromWallet.Balance < amount {
+		return nil, errors.New("insufficient balance")
+	}
+
+	err = database.DB.Transaction(func(tx *gorm.DB) error {
+		// We are assuming that all wallets are in the same currency (Which is USD)
+		// Deduct from the sender's wallet
+		fromWallet.Balance -= amount
+		// Add to the receiver's wallet
+		toWallet.Balance += amount
+
+		err = s.walletRepository.UpdateBalance(fromWallet)
+		if err != nil {
+			return fmt.Errorf("failed to update from wallet balance: %w", err)
+		}
+
+		err = s.walletRepository.UpdateBalance(toWallet)
+		if err != nil {
+			return fmt.Errorf("failed to update to wallet balance: %w", err)
+		}
+
+		_, err = s.transactionRepository.Create(&models.Transaction{
+			UserId:          fromUserId,
+			TransactionType: "transfer",
+			Amount:          amount,
+			Currency:        fromWallet.Currency,
+			Metadata:        `{"to_user_id":` + fmt.Sprint(toUserId) + `}`,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to create transaction for from wallet: %w", err)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return fromWallet, nil
+}
+
 func (s *WalletService) GetBalance(userId uint) (*models.Wallet, error) {
 	return s.walletRepository.FindByUserId(userId)
 }

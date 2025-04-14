@@ -97,3 +97,71 @@ func (h *WalletHandler) Withdraw(c *gin.Context) {
 		"currency": wallet.Currency,
 	}})
 }
+
+func (h *WalletHandler) Transfer(c *gin.Context) {
+	userIdStr := c.Param("userId")
+	userId, err := strconv.ParseUint(userIdStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	var req TransferRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	amount := utils.MoneyToCents(req.Amount)
+	wallet, err := h.walletService.Transfer(uint(userId), req.RecipientUserId, uint(amount))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to transfer: %v", err)})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": gin.H{
+		"id":       wallet.ID,
+		"user_id":  wallet.UserId,
+		"balance":  utils.CentsToMoney(int64(wallet.Balance), wallet.Currency),
+		"currency": wallet.Currency,
+	}})
+}
+
+func (h *WalletHandler) GetBalance(c *gin.Context) {
+	userIdStr := c.Param("userId")
+	userId, err := strconv.ParseUint(userIdStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	wallet, err := h.walletService.GetBalance(uint(userId))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to get balance: %v", err)})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": gin.H{
+		"id":       wallet.ID,
+		"user_id":  wallet.UserId,
+		"balance":  utils.CentsToMoney(int64(wallet.Balance), wallet.Currency),
+		"currency": wallet.Currency,
+	}})
+}
+
+func (h *WalletHandler) GetTransactionHistory(c *gin.Context) {
+	userIdStr := c.Param("userId")
+	userId, err := strconv.ParseUint(userIdStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	transactions, err := h.walletService.GetTransactionHistory(uint(userId))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to get transaction history: %v", err)})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": transactions})
+}
