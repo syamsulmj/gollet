@@ -36,7 +36,7 @@ type TransferRequest struct {
 
 type TransactionHistoryResponse struct {
 	ID              uint   `json:"id"`
-	UserId          uint   `json:"user_id"`
+	UserID          uint   `json:"user_id"`
 	Amount          string `json:"amount"`
 	TransactionType string `json:"transaction_type"`
 	Metadata        string `json:"metadata"`
@@ -73,7 +73,7 @@ func (h *WalletHandler) Deposit(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": gin.H{
 		"id":       wallet.ID,
-		"user_id":  wallet.UserId,
+		"user_id":  wallet.UserID,
 		"balance":  utils.CentsToMoney(int64(wallet.Balance), wallet.Currency),
 		"currency": wallet.Currency,
 	}})
@@ -102,7 +102,7 @@ func (h *WalletHandler) Withdraw(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": gin.H{
 		"id":       wallet.ID,
-		"user_id":  wallet.UserId,
+		"user_id":  wallet.UserID,
 		"balance":  utils.CentsToMoney(int64(wallet.Balance), wallet.Currency),
 		"currency": wallet.Currency,
 	}})
@@ -131,7 +131,7 @@ func (h *WalletHandler) Transfer(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": gin.H{
 		"id":       wallet.ID,
-		"user_id":  wallet.UserId,
+		"user_id":  wallet.UserID,
 		"balance":  utils.CentsToMoney(int64(wallet.Balance), wallet.Currency),
 		"currency": wallet.Currency,
 	}})
@@ -153,7 +153,7 @@ func (h *WalletHandler) GetBalance(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": gin.H{
 		"id":       wallet.ID,
-		"user_id":  wallet.UserId,
+		"user_id":  wallet.UserID,
 		"balance":  utils.CentsToMoney(int64(wallet.Balance), wallet.Currency),
 		"currency": wallet.Currency,
 	}})
@@ -177,7 +177,7 @@ func (h *WalletHandler) GetTransactionHistory(c *gin.Context) {
 	for _, transaction := range transactions {
 		response = append(response, TransactionHistoryResponse{
 			ID:              transaction.ID,
-			UserId:          transaction.UserId,
+			UserID:          transaction.UserID,
 			Amount:          utils.CentsToMoney(int64(transaction.Amount), transaction.Currency),
 			TransactionType: transaction.TransactionType,
 			Metadata:        transaction.Metadata,

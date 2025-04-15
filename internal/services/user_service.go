@@ -13,11 +13,11 @@ import (
 )
 
 type UserService struct {
-	userRepository   *repositories.UserRepository
-	walletRepository *repositories.WalletRepository
+	userRepository   repositories.UserRepository
+	walletRepository repositories.WalletRepository
 }
 
-func NewUserService(userRepository *repositories.UserRepository, walletRepository *repositories.WalletRepository) *UserService {
+func NewUserService(userRepository repositories.UserRepository, walletRepository repositories.WalletRepository) *UserService {
 	return &UserService{
 		userRepository:   userRepository,
 		walletRepository: walletRepository,

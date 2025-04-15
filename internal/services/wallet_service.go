@@ -11,11 +11,14 @@ import (
 )
 
 type WalletService struct {
-	walletRepository      *repositories.WalletRepository
-	transactionRepository *repositories.TransactionRepository
+	walletRepository      repositories.WalletRepository
+	transactionRepository repositories.TransactionRepository
 }
 
-func NewWalletService(walletRepository *repositories.WalletRepository, transactionRepository *repositories.TransactionRepository) *WalletService {
+func NewWalletService(
+	walletRepository repositories.WalletRepository,
+	transactionRepository repositories.TransactionRepository,
+) *WalletService {
 	return &WalletService{
 		walletRepository:      walletRepository,
 		transactionRepository: transactionRepository,
@@ -44,7 +47,7 @@ func (s *WalletService) Deposit(userId uint, amount uint) (*models.Wallet, error
 		}
 
 		_, err = s.transactionRepository.Create(&models.Transaction{
-			UserId:          userId,
+			UserID:          userId,
 			TransactionType: "deposit",
 			Amount:          amount,
 			Currency:        wallet.Currency,
@@ -87,7 +90,7 @@ func (s *WalletService) Withdraw(userId uint, amount uint) (*models.Wallet, erro
 		}
 
 		_, err = s.transactionRepository.Create(&models.Transaction{
-			UserId:          userId,
+			UserID:          userId,
 			TransactionType: "withdraw",
 			Amount:          amount,
 			Currency:        wallet.Currency,
@@ -144,7 +147,7 @@ func (s *WalletService) Transfer(fromUserId uint, toUserId uint, amount uint) (*
 		}
 
 		_, err = s.transactionRepository.Create(&models.Transaction{
-			UserId:          fromUserId,
+			UserID:          fromUserId,
 			TransactionType: "transfer",
 			Amount:          amount,
 			Currency:        fromWallet.Currency,
