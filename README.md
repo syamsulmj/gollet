@@ -102,3 +102,17 @@ Now, to run the test for the services. We can simply do it my running
 ```
 go test ./internal/services
 ```
+
+# Summary
+
+This is my first attempt in writing a backend services using Golang and I never try out Golang before. Eventhough it's vibe coding era. But, I had fun searching around for resources in order to understand a lil bit details on the Golang code structure and their best practices.
+
+My next attempt in creating a Go project would prolly be using the [MelkeyDev](https://github.com/Melkeydev/go-blueprint) framework which looks more structured and easier to understand rather than just creating my own code structure with zero idea of how Go works behind my back.
+
+Total Hours spend: 
+3h-5h spended trying to understand Golang syntax, code structure, trendy libraries (that can make my life easy), and last but not least, try to figure it out why most of the articles online are using different libraries for HTTP request and the ORM.
+
+3h spended trying to vibe coding myself with multiple platform just to understand how we can create a backend system using the MVC concept.
+
+3h spended and still ongoing just to understand how unit testing works on Go T-T....... It's really confusing. IDK WHY!? WHY YOU NEED MOCK FOR THE DB RESPONSE? WHY CAN'T WE HAVE TEST ENV WITH A TEST DB? :')
+
